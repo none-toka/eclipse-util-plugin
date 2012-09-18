@@ -1,6 +1,8 @@
 package org.none.toka.util.handlers;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -9,17 +11,17 @@ import java.util.Iterator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 
 public class ExplorerOpenHandler extends AbstractHandler {
 	private static class NotFoundException extends Exception {
@@ -103,10 +105,29 @@ public class ExplorerOpenHandler extends AbstractHandler {
 		if (path == null || path.isEmpty()) {
 			return;
 		}
-		String args = getTargetArgs(path);
+		String targetPath = getTargetPathString(path);
 		// TODO delete
-		System.out.println("args: " + args);
-		ProcessBuilder pb = new ProcessBuilder("explorer", args);
+		System.out.println("args: " + targetPath);
+		
+		if (!Desktop.isDesktopSupported()) {
+			callProcess(targetPath);
+			return;
+		}
+		
+		Desktop desktop = Desktop.getDesktop();
+		if (!desktop.isSupported(Desktop.Action.OPEN)) {
+			callProcess(targetPath);
+		}
+		
+		try {
+			desktop.open(new File(targetPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void callProcess(String targetPath) {
+		ProcessBuilder pb = new ProcessBuilder("explorer", targetPath);
 		try {
 			pb.redirectErrorStream(true);
 			Process process = pb.start();
@@ -121,7 +142,7 @@ public class ExplorerOpenHandler extends AbstractHandler {
 		}
 	}
 	
-	private String getTargetArgs(IPath ipath) {
+	private String getTargetPathString(IPath ipath) {
 		if ("jar".equals(ipath.getFileExtension())) {
 			String path = ipath.makeAbsolute().toFile().getParent();
 			return path;
