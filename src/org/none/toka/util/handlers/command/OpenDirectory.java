@@ -64,8 +64,6 @@ public final class OpenDirectory {
 		if (path == null || path.isEmpty()) {
 			return;
 		}
-		// TODO delete
-		System.out.println("args: " + path.toOSString());
 		command.execute(path);
 	}
 }

@@ -24,7 +24,7 @@ public final class CallJavaDesktop implements OpenCommand {
 	}
 	
 	private String getTargetPathString(IPath ipath) {
-		if ("jar".equals(ipath.getFileExtension())) {
+		if (ipath.toFile().isFile()) {
 			String path = ipath.makeAbsolute().toFile().getParent();
 			return path;
 		}

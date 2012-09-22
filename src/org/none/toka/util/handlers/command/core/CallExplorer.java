@@ -1,40 +1,45 @@
 package org.none.toka.util.handlers.command.core;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.none.toka.util.handlers.command.OpenCommand;
 
 public final class CallExplorer implements OpenCommand {
+	private static final List<String> EXPLORER = new ArrayList<String>();
+	static {
+		EXPLORER.add("explorer");
+		EXPLORER.add("/e,");
+	}
+
 	public CallExplorer() {
 	}
 
 	@Override
 	public boolean execute(IPath path) {
-		String targetPath = getTargetPathString(path);
-		ProcessBuilder pb = new ProcessBuilder("explorer", targetPath);
+		List<String> command = new LinkedList<String>(EXPLORER);
+		List<String> targetArgs = getTargetArgs(path);
+		command.addAll(targetArgs);
+		ProcessBuilder pb = new ProcessBuilder(command);
 		try {
-			pb.redirectErrorStream(true);
-			Process process = pb.start();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					process.getInputStream()));
-			String read;
-			while (null != (read = reader.readLine())) {
-				System.out.println(read);
-			}
+			pb.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return true;
 	}
 	
-	private String getTargetPathString(IPath ipath) {
-		if ("jar".equals(ipath.getFileExtension())) {
-			String path = ipath.makeAbsolute().toFile().getParent();
-			return path;
+	private List<String> getTargetArgs(IPath ipath) {
+		List<String> ret = new ArrayList<String>();
+		if (ipath.toFile().isFile()) {
+			ret.add("/select,");
+			ret.add(ipath.toFile().getAbsolutePath());
+			return ret;
 		}
-		return ipath.toFile().getAbsolutePath();
+		ret.add(ipath.toFile().getAbsolutePath());
+		return ret;
 	}
 }
