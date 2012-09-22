@@ -1,16 +1,27 @@
 package org.none.toka.util.handlers.command;
 
 import java.awt.Desktop;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.eclipse.core.runtime.IPath;
+import org.none.toka.util.handlers.command.core.CallExplorer;
+import org.none.toka.util.handlers.command.core.CallJavaDesktop;
+import org.none.toka.util.handlers.command.core.CallNothing;
 
+/**
+ * Command for opening explorer
+ * 
+ * @author none_toka
+ *
+ */
 public final class OpenDirectory {
 	private static volatile OpenDirectory instance;
 	
+	/**
+	 * open explorer for the given path
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public static boolean execute(IPath path) {
 		synchronized (OpenDirectory.class) {
 			if (instance == null) {
@@ -18,57 +29,43 @@ public final class OpenDirectory {
 			}
 		}
 		
-		instance.callExplorer(path);
+		instance.open(path);
 		return true;
 	}
 	
-	private void callExplorer(IPath path) {
+	private OpenCommand command;
+	
+	private OpenDirectory() {
+		decideOpenMethod();
+	}
+	
+	private void decideOpenMethod() {
+		String osName = System.getProperty("os.name");
+		if (osName.startsWith("windows") || osName.startsWith("Windows")) {
+			command = new CallExplorer();
+			return;
+		}
+		
+		if (!Desktop.isDesktopSupported()) {
+			command = new CallNothing();
+			return;
+		}
+		
+		// MINE: 恐らく Desktop.getDesktop は sigleton なので、このクラスで参照を持つ必要はない
+		Desktop desktop = Desktop.getDesktop();
+		if (!desktop.isSupported(Desktop.Action.OPEN)) {
+			command = new CallNothing();
+		}
+		
+		command = new CallJavaDesktop();
+	}
+
+	private void open(IPath path) {
 		if (path == null || path.isEmpty()) {
 			return;
 		}
-		String targetPath = getTargetPathString(path);
 		// TODO delete
-		System.out.println("args: " + targetPath);
-		
-		if (!Desktop.isDesktopSupported()) {
-			callProcess(targetPath);
-			return;
-		}
-		
-		Desktop desktop = Desktop.getDesktop();
-		if (!desktop.isSupported(Desktop.Action.OPEN)) {
-			callProcess(targetPath);
-			return;
-		}
-		
-		try {
-			desktop.open(new File(targetPath));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void callProcess(String targetPath) {
-		ProcessBuilder pb = new ProcessBuilder("explorer", targetPath);
-		try {
-			pb.redirectErrorStream(true);
-			Process process = pb.start();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					process.getInputStream()));
-			String read;
-			while (null != (read = reader.readLine())) {
-				System.out.println(read);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private String getTargetPathString(IPath ipath) {
-		if ("jar".equals(ipath.getFileExtension())) {
-			String path = ipath.makeAbsolute().toFile().getParent();
-			return path;
-		}
-		return ipath.toFile().getAbsolutePath();
+		System.out.println("args: " + path.toOSString());
+		command.execute(path);
 	}
 }
