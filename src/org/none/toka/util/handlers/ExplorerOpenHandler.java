@@ -9,10 +9,15 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -74,16 +79,30 @@ public class ExplorerOpenHandler extends AbstractHandler {
 	}
 	
 	private IPath getLocationPath(IJavaElement type) throws NotFoundException {
+		IJavaElement targetType = type;
+		for (long i = 0; i < Long.MAX_VALUE; i++) {
+			if (isTarget(targetType)) { break; }
+			targetType = targetType.getParent();
+		}
 		IResource resource = null;
 		try {
-			resource = type.getCorrespondingResource();
+			resource = targetType.getCorrespondingResource();
 		} catch (JavaModelException e) {
 			throw new NotFoundException("Path: " + e.getMessage(), e);
 		}
 		if (resource != null) {
 			return getLocationPath(resource);
 		}
-		return type.getPath();
+		return targetType.getPath();
+	}
+
+	private boolean isTarget(IJavaElement type) {
+		if (type instanceof IProject) { return true; }
+		if (type instanceof IJavaProject) { return true; }
+		if (type instanceof IPackageFragmentRoot) { return true; }
+		if (type instanceof IPackageFragment) { return true; }
+		if (type instanceof ICompilationUnit) { return true; }
+		return false;
 	}
 
 	private IPath getLocationPath(IResource resource) {
