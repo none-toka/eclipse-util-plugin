@@ -31,11 +31,12 @@
    </extension>
    <extension
          id="org.none.toka.util.plugin.commands"
-         name="command1name"
+         name="open util commands"
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.eclipse.ui.category.window"
             id="org.none.toka.util.plugin.explorer.open.command"
-            name="Exploerer Open">
+            name="Open Explorer">
       </command>
    </extension>
    <extension
@@ -47,11 +48,20 @@
             locationURI="popup:org.eclipse.ui.popup.any">
          <command
                commandId="org.none.toka.util.plugin.explorer.open.command"
-               label="Explorer Open"
+               label="Open Explorer"
                mnemonic="X"
                style="push">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.none.toka.util.plugin.explorer.open.command"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+Q">
+      </key>
    </extension>
 
 
