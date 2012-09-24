@@ -17,10 +17,18 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.none.toka.util.handlers.path.NotFoundException;
 
-public class ResourceSelector {
-	public ResourceSelector() {
+public class ResourceSelector implements Selector {
+	private static final ResourceSelector INSTANCE = new ResourceSelector();
+	public static Selector getInstance() {
+		return INSTANCE;
 	}
 	
+	private ResourceSelector() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.none.toka.util.handlers.path.select.Selector#getPath(java.lang.Object)
+	 */
 	public IPath getPath(Object type) throws NotFoundException {
 		if (type instanceof IJavaElement) {
 			return getLocationPath((IJavaElement) type);

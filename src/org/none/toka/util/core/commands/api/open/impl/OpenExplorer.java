@@ -1,8 +1,9 @@
-package org.none.toka.util.core.commands.api;
+package org.none.toka.util.core.commands.api.open.impl;
 
 import java.awt.Desktop;
 
 import org.eclipse.core.runtime.IPath;
+import org.none.toka.util.core.commands.api.open.OpenAPI;
 import org.none.toka.util.core.commands.call.CallCommand;
 import org.none.toka.util.core.commands.call.impl.CallExplorer;
 import org.none.toka.util.core.commands.call.impl.CallJavaDesktop;
@@ -14,7 +15,7 @@ import org.none.toka.util.core.commands.call.impl.CallNothing;
  * @author none_toka
  *
  */
-public final class OpenExplorer {
+public final class OpenExplorer implements OpenAPI {
 	private static volatile OpenExplorer instance;
 	
 	/**
@@ -23,21 +24,25 @@ public final class OpenExplorer {
 	 * @param path
 	 * @return
 	 */
-	public static boolean execute(IPath path) {
+	public static OpenAPI getInstance() {
 		synchronized (OpenExplorer.class) {
 			if (instance == null) {
 				instance = new OpenExplorer();
 			}
 		}
 		
-		instance.open(path);
-		return true;
+		return instance;
 	}
 	
 	private CallCommand command;
 	
 	private OpenExplorer() {
 		decideOpenMethod();
+	}
+	
+	public synchronized boolean execute(IPath path) {
+		open(path);
+		return true;
 	}
 	
 	private void decideOpenMethod() {

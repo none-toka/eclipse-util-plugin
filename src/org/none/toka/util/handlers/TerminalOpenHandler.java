@@ -1,22 +1,13 @@
 package org.none.toka.util.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.none.toka.util.core.commands.api.open.impl.OpenTerminal;
+import org.none.toka.util.handlers.path.select.ResourceSelector;
 
-public class TerminalOpenHandler extends AbstractHandler {
+public class TerminalOpenHandler extends UniversalOpenHandler {
 	/**
 	* The constructor.
 	*/
 	public TerminalOpenHandler() {
-	}
-	
-	/**
-	* the command has been executed, so extract extract the needed information
-	* from the application context.
-	*/
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		System.out.println("this is test");
-		return null;
+		super(ResourceSelector.getInstance(), OpenTerminal.getInstance());
 	}
 }
