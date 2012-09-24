@@ -1,13 +1,13 @@
-package org.none.toka.util.handlers.command.core;
+package org.none.toka.util.core.commands.call.impl;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IPath;
-import org.none.toka.util.handlers.command.OpenCommand;
+import org.none.toka.util.core.commands.call.CallCommand;
 
-public final class CallJavaDesktop implements OpenCommand {
+public final class CallJavaDesktop implements CallCommand {
 	public CallJavaDesktop() {
 	}
 

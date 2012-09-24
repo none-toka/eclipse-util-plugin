@@ -1,4 +1,4 @@
-package org.none.toka.util.handlers.command.core;
+package org.none.toka.util.core.commands.call.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
-import org.none.toka.util.handlers.command.OpenCommand;
+import org.none.toka.util.core.commands.call.CallCommand;
 
-public final class CallExplorer implements OpenCommand {
+public final class CallExplorer implements CallCommand {
 	private static final List<String> EXPLORER = new ArrayList<String>();
 	static {
 		EXPLORER.add("explorer");

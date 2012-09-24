@@ -1,11 +1,12 @@
-package org.none.toka.util.handlers.command;
+package org.none.toka.util.core.commands.api;
 
 import java.awt.Desktop;
 
 import org.eclipse.core.runtime.IPath;
-import org.none.toka.util.handlers.command.core.CallExplorer;
-import org.none.toka.util.handlers.command.core.CallJavaDesktop;
-import org.none.toka.util.handlers.command.core.CallNothing;
+import org.none.toka.util.core.commands.call.CallCommand;
+import org.none.toka.util.core.commands.call.impl.CallExplorer;
+import org.none.toka.util.core.commands.call.impl.CallJavaDesktop;
+import org.none.toka.util.core.commands.call.impl.CallNothing;
 
 /**
  * Command for opening explorer
@@ -13,8 +14,8 @@ import org.none.toka.util.handlers.command.core.CallNothing;
  * @author none_toka
  *
  */
-public final class OpenDirectory {
-	private static volatile OpenDirectory instance;
+public final class OpenExplorer {
+	private static volatile OpenExplorer instance;
 	
 	/**
 	 * open explorer for the given path
@@ -23,9 +24,9 @@ public final class OpenDirectory {
 	 * @return
 	 */
 	public static boolean execute(IPath path) {
-		synchronized (OpenDirectory.class) {
+		synchronized (OpenExplorer.class) {
 			if (instance == null) {
-				instance = new OpenDirectory();
+				instance = new OpenExplorer();
 			}
 		}
 		
@@ -33,9 +34,9 @@ public final class OpenDirectory {
 		return true;
 	}
 	
-	private OpenCommand command;
+	private CallCommand command;
 	
-	private OpenDirectory() {
+	private OpenExplorer() {
 		decideOpenMethod();
 	}
 	
