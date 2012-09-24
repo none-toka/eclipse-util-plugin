@@ -28,6 +28,31 @@
             </and>
          </activeWhen>
       </handler>
+      <handler
+            class="org.none.toka.util.handlers.TerminalOpenHandler"
+            commandId="org.none.toka.util.explorer.terminal.command">
+         <activeWhen>
+            <and>
+               <count
+                     value="1">
+               </count>
+               <or>
+                  <with
+                        variable="activePartId">
+                     <equals
+                           value="org.eclipse.jdt.ui.PackageExplorer">
+                     </equals>
+                  </with>
+                  <with
+                        variable="activePartId">
+                     <equals
+                           value="org.eclipse.ui.navigator.ProjectExplorer">
+                     </equals>
+                  </with>
+               </or>
+            </and>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          id="org.none.toka.util.plugin.commands"
@@ -38,6 +63,11 @@
             id="org.none.toka.util.plugin.explorer.open.command"
             name="Open Explorer">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.none.toka.util.explorer.terminal.command"
+            name="Open Terminal">
+      </command>
    </extension>
    <extension
          id="menu1"
@@ -46,12 +76,23 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any">
-         <command
-               commandId="org.none.toka.util.plugin.explorer.open.command"
-               label="Open Explorer"
-               mnemonic="X"
-               style="push">
-         </command>
+         <menu
+               label="Open Simply">
+            <command
+                  commandId="org.none.toka.util.plugin.explorer.open.command"
+                  label="Open Explorer"
+                  style="push">
+            </command>
+            <separator
+                  name="org.none.toka.util.explorer.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.none.toka.util.explorer.terminal.command"
+                  label="Open Terminal"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -61,6 +102,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+Q">
+      </key>
+      <key
+            commandId="org.none.toka.util.explorer.terminal.command"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+A">
       </key>
    </extension>
 
