@@ -24,6 +24,12 @@
                            value="org.eclipse.ui.navigator.ProjectExplorer">
                      </equals>
                   </with>
+                  <with
+                        variable="activePartId">
+                     <equals
+                           value="org.eclipse.search.ui.views.SearchView">
+                     </equals>
+                  </with>
                </or>
             </and>
          </activeWhen>
@@ -47,6 +53,12 @@
                         variable="activePartId">
                      <equals
                            value="org.eclipse.ui.navigator.ProjectExplorer">
+                     </equals>
+                  </with>
+                  <with
+                        variable="activePartId">
+                     <equals
+                           value="org.eclipse.search.ui.views.SearchView">
                      </equals>
                   </with>
                </or>
